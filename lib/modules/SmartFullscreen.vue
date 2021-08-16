@@ -27,7 +27,7 @@ export default {
     },
     debounceDuration: {   //节流时间
       type: Number,
-      default: 300
+      default: 100
     },
     name: {   //名称，$smart需要改字段才能正常使用
       type: String,
@@ -36,7 +36,6 @@ export default {
   },
   data () {
     return {
-      handleResizeTime: null, //节流句柄
       rate: {   //盒子比例
         box: 0,
         content: 0
@@ -51,7 +50,7 @@ export default {
     this.$nextTick(() => {
       if (this.isBody) this.mountBody()
       this.init()
-      this.handleResize = window.addEventListener('resize', this.onResize)
+      window.addEventListener('resize', this.onResizeListener)
     })
   },
   methods: {
@@ -60,21 +59,24 @@ export default {
       this.$refs.Screen.style.cssText = `width:${this.width}px;height:${this.height}px;`
       this.onResize()
     },
-    onResize () {
+    onResizeListener () {
       if (this.handleResizeTime) {
         clearTimeout(this.handleResizeTime)
       }
       this.handleResizeTime = setTimeout(() => {
-        let instance = this.getInstance()
-        this.rate.box = instance.clientWidth / instance.clientHeight
-        this.scale.X = instance.clientWidth / this.width
-        this.scale.Y = instance.clientHeight / this.height
-        if (this.rate.box > this.rate.content) {
-          this.$refs.Screen.style.transform = `scale(${this.scale.Y})`
-        } else {
-          this.$refs.Screen.style.transform = `scale(${this.scale.X})`
-        }
+        this.onResize()
       }, this.debounceDuration)
+    },
+    onResize () {
+      let instance = this.getInstance()
+      this.rate.box = instance.clientWidth / instance.clientHeight
+      this.scale.X = instance.clientWidth / this.width
+      this.scale.Y = instance.clientHeight / this.height
+      if (this.rate.box > this.rate.content) {
+        this.$refs.Screen.style.transform = `scale(${this.scale.Y})`
+      } else {
+        this.$refs.Screen.style.transform = `scale(${this.scale.X})`
+      }
     },
     getInstance () {
       let instance = this.$el
@@ -97,7 +99,7 @@ export default {
     }
   },
   destroyed () {
-    window.removeEventListener('resize', this.onResize)
+    window.removeEventListener('resize', this.onResizeListener)
   }
 }
 
@@ -117,7 +119,6 @@ export default {
 }
 
 .smart-fullscreen-content {
-  background: pink;
   transition: all 0.5s ease;
   transform-origin: center;
   flex-shrink: 0;
