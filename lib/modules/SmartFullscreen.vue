@@ -32,6 +32,10 @@ export default {
     name: {   //名称，$smart需要改字段才能正常使用
       type: String,
       required: true
+    },
+    loadTransition: { //是否画面加载就添加过渡动画
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -51,6 +55,13 @@ export default {
       if (this.isBody) this.mountBody()
       this.init()
       window.addEventListener('resize', this.onResizeListener)
+      if (this.loadTransition) {
+        this.$refs.Screen.style.transition = 'all 0.5s ease'
+      } else {
+        setTimeout(() => {
+          this.$refs.Screen.style.transition = 'all 0.5s ease'
+        })
+      }
     })
   },
   methods: {
@@ -60,6 +71,7 @@ export default {
       this.onResize()
     },
     onResizeListener () {
+
       if (this.handleResizeTime) {
         clearTimeout(this.handleResizeTime)
       }
@@ -115,11 +127,9 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
 }
 
 .smart-fullscreen-content {
-  transition: all 0.5s ease;
   transform-origin: center;
   flex-shrink: 0;
 }
