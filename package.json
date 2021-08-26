@@ -8,6 +8,11 @@
     "vue",
     "fullscreen"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:NagateBu/smart-fullscreen-v.git"
+  },
+  "homepage": "https://github.com/NagateBu",
   "author": "NagateBu",
   "license": "MIT",
   "devDependencies": {
